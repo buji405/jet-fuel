@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "test": "mocha",
+    "start": "node backend/server.js"
   },
   "keywords": [],
   "author": "",
@@ -14,17 +14,14 @@
     "express": "^4.15.4",
     "knex": "^0.13.0",
     "pg": "^7.1.2",
-    "short-hash": "^1.0.0",
-
+    "short-hash": "^1.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "mocha": "3.5.0"
+  },
   "description": "",
   "engines": {
-   "node": "6.10.2",
-   "npm": "5.3.0"
- },
- "scripts": {
-   "test": "mocha",
-   "start": "node backend/server.js"
- },
+    "node": "6.10.2",
+    "npm": "5.3.0"
+  }
 }
