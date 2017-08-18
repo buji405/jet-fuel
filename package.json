@@ -14,8 +14,17 @@
     "express": "^4.15.4",
     "knex": "^0.13.0",
     "pg": "^7.1.2",
-    "short-hash": "^1.0.0"
+    "short-hash": "^1.0.0",
+
   },
   "devDependencies": {},
-  "description": ""
+  "description": "",
+  "engines": {
+   "node": "6.10.2",
+   "npm": "5.3.0"
+ },
+ "scripts": {
+   "test": "mocha",
+   "start": "node backend/server.js"
+ },
 }
