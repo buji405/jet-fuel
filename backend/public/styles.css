@@ -75,3 +75,8 @@ h1 {
   border: none;
   cursor: pointer;
 }
+
+.folder-container {
+  display: flex;
+  flex-direction: column;
+}
