@@ -2,6 +2,7 @@ const express = require('express');  //requires the Express module that was inst
 const app = express(); //sets up the Express application
 const path = require('path'); //part of letting you access the absolute path
 const bodyParser = require('body-parser');
+const shortHash = require('short-hash');
 
 const environment = process.env.NODE_ENV || 'development'
 const configuration = require('./knexfile')[environment]
@@ -29,9 +30,9 @@ app.get('/api/v1/folders', (request, response) => {
     });
 });
 
-app.get('/api/v1/folders/:id/links', (request, response) => {
-  database('links').where('folder_id', request.params.id).select()
-    .then(links = {
+app.get('/api/v1/links', (request, response) => {
+  database('links').select()
+    .then(links => {
       response.status(200).json(links)
     })
     .catch(error => {
@@ -58,24 +59,40 @@ app.post('/api/v1/folders', (request, response) => {
     });
 });
 
+app.delete('/api/v1/folders/:id', (request, response) => {
+  const id = request.params.id
+  database('folders').where('id', id).del()
+  .then((res) => response.status(200).json(res))
+  .catch(error => {
+    response.status(501).json({ error })
+  })
+})
 
-app.post('/api/v1/folders/:id/links', (request, response) => {
+app.post('/api/v1/links', (request, response) => {
   const newLink = request.body
+  newLink.shortURL = shortHash(newLink.origURL)
 
-  for(let requiredParameter of ['linkName']) {
+  for(let requiredParameter of ['origURL', 'description', 'folder_id']) {
     if(!newLink[requiredParameter]) {
       return response.status(422).json({
         error: `Missing required parameter ${requiredParameter}`
       })
     }
   }
-  database('links').where('folder_id', request.params.id).insert(newLink, 'id')
+  database('links').insert(newLink, '*')
     .then(link => {
-      response.status(201).json({ id: link[0] })
+      response.status(201).json(link[0])
     })
     .catch(error => {
       response.status(500).json({ error })
     })
+})
+
+app.get('/api/v1/folders/:id/links', (request, response) => {
+  const id = request.params.id
+  console.log(id);
+  database('links').where('folder_id', id).select()
+  .then((links) => response.status(200).json(links))
 })
 
 //creates a route handler to listen for GET requests from a client. The first argument in this function is the route path. Listening for get requests on localhost:3000/.
