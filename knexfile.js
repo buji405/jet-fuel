@@ -6,7 +6,7 @@ module.exports = {
     client: 'pg',
     connection: 'postgres://localhost/jetfuel',
     migrations: {
-      directory: './db/migrations'
+      directory: './backend/db/migrations'
     },
     useNullAsDefault: true
   },
@@ -31,7 +31,7 @@ module.exports = {
   client: 'pg',
   connection: process.env.DATABASE_URL + `?ssl=true`,
   migrations: {
-    directory: '.backend/db/migrations'
+    directory: './backend/db/migrations'
   },
   useNullAsDefault: true
 },
@@ -41,11 +41,10 @@ test: {
    connection: process.env.DATABASE_URL || 'postgres://localhost/jetfueltest',
    useNullAsDefault: true,
    migrations: {
-     directory: './db/migrations'
+     directory: './backend/db/migrations'
    },
    seeds: {
-     directory: './db/test/seeds'
+     directory: './backend/db/test/seeds'
    }
  }
-
 };
