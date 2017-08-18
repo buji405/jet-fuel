@@ -9,7 +9,6 @@ let folderId;
 $('.submit').on('click', (e) => {
   let folderInput = $('.folder-input').val()
   e.preventDefault()
-  console.log(folderInput);
   clearInputs(folderInput)
   $('.folder-list-container').append(addFolder(folderInput))
 })
@@ -19,29 +18,19 @@ const clearInputs = (folderInput) => {
 }
 
 $('.folder-list-container').on('click', '.short-submit', (e) => {
-  console.log('hi');
   e.preventDefault()
   let urlInput = $(e.target).parent().find('.origURL').val()
   let descriptionInput = $(e.target).parent().find('.description').val()
-
-
-  console.log(urlInput);
-  console.log(descriptionInput);
-  console.log(folderId);
-
   addLink(urlInput, descriptionInput, folderId, $(e.target).parent().find('.info-wrapper'))
 })
 
 $('.folder-list-container').on('click', '.folder', function (e) {
-  console.log('hi');
   $('.drop-down').toggleClass('show')
   folderId =  e.target.value
   getFolderLinks(folderId, $(this).parent().find('.info-wrapper'))
-  console.log($(this).parent().find('.info-wrapper'));
 })
 
 $('.folder-list-container').on('click', '.delete-folder', function (e) {
-  console.log($(e.target).val());
     deleteFolder($(e.target).val())
 })
 
@@ -103,10 +92,9 @@ const addLink = (urlInput, descriptionInput, folderId, parentElement) => {
 
 const getLinks = () => {
   fetch(`/api/v1/links`)
-    .then((res) => res.json())
+  .then((res) => res.json())
   .then((data) => {
     console.log(data)
-
   })
 }
 
