@@ -21,12 +21,14 @@ $('.folder-list-container').on('click', '.short-submit', (e) => {
   e.preventDefault()
   let urlInput = $(e.target).parent().find('.origURL').val()
   let descriptionInput = $(e.target).parent().find('.description').val()
+
   addLink(urlInput, descriptionInput, folderId, $(e.target).parent().find('.info-wrapper'))
 })
 
 $('.folder-list-container').on('click', '.folder', function (e) {
-  $('.drop-down').toggleClass('show')
+  $(e.target).parent().find(".drop-down").toggleClass("show")
   folderId =  e.target.value
+
   getFolderLinks(folderId, $(this).parent().find('.info-wrapper'))
 })
 
@@ -53,21 +55,21 @@ const getFolders = () => {
   .then((res) => res.json())
   .then((folderName) => {
     folderName.forEach((folderName) => {
-      // console.log(folderName);
       $('.folder-list-container').append(`
           <div class="folder-container">
-          <button class="folder" value="${folderName.id}">${folderName.folderName}</button>
-          <button class="delete-folder" value="${folderName.id}">Delete</button
-            <div class="drop-down show">
-              <input class="input description" type="text" placeholder="description">
-              <input class="input origURL" type="text" placeholder="URL">
-              <input class="short-submit" type="submit" value="Shorten URL">
-              <div class="info-wrapper"></div>
-            </div>
+            <button class="folder" value="${folderName.id}">${folderName.folderName}</button>
+              <div class="drop-down">
+                <input class="input description" type="text" placeholder="description">
+                <input class="input origURL" type="text" placeholder="URL">
+                <input class="short-submit" type="submit" value="Shorten URL">
+                <div class="info-wrapper"></div>
+                <button class="delete-folder" value="${folderName.id}">Delete Folder</button>
+              </div>
             </div>
         `)
     })
   })
+  .catch(error => console.log(error))
 }
 
 const addLink = (urlInput, descriptionInput, folderId, parentElement) => {
@@ -88,6 +90,7 @@ const addLink = (urlInput, descriptionInput, folderId, parentElement) => {
     getLinks()
     appendInfo(res.origURL, res.description, parentElement, res.shortURL)
   })
+  .catch(error => console.log(error))
 }
 
 const getLinks = () => {
@@ -96,21 +99,22 @@ const getLinks = () => {
   .then((data) => {
     console.log(data)
   })
+  .catch(error => console.log(error))
 }
 
 const deleteFolder = (id) => {
-  console.log('hey');
   fetch(`/api/v1/folders/${id}`, {
     method: 'DELETE'
   })
     .then(() => getFolders())
+    .catch(error => console.log(error))
 }
 
 const appendInfo = (url, description, parentElement, shortURL) => {
+  // $('.new-info').html("")
   parentElement.append(`
-    <div>
+    <div class="new-info">
       <div class="descriptionTitle">${description}</div>
-      <div class="urlTitle">${url}</div>
       <div class="shortTitle">${window.location.href}${shortURL}</div>
     </div>`)
 }
@@ -124,4 +128,5 @@ const getFolderLinks =  (id, parentElement) => {
       appendInfo(info.origURL, info.description, parentElement, info.shortURL)
     })
   })
+  .catch(error => console.log(error))
 }
