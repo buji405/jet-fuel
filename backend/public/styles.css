@@ -46,6 +46,11 @@ h1 {
   padding-left: 5px;
 }
 
+.description,
+.origURL {
+  border-bottom: 1px solid #263D42;
+}
+
 .submit {
   width: 115px;
   height: 30px;
@@ -79,4 +84,46 @@ h1 {
 .folder-container {
   display: flex;
   flex-direction: column;
+}
+
+.drop-down {
+  display: none;
+}
+
+.show{
+  display: block;
+  background: #fff;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.delete-folder {
+  background: #bf3333;
+  color: #fff;
+  height: 20px;
+  margin: 20px 0;
+}
+
+.delete-folder,
+.short-submit {
+  border: none;
+  border-radius: 5px;
+}
+
+.short-submit {
+  background: #24af83;
+  color: #fff;
+  height: 30px;
+  padding: 4px;
+  font-size: 14px;
+}
+
+.descriptionTitle {
+  font-size: 20px;
+  font-weight: bold;
+  padding-bottom: 5px;
+}
+
+.new-info {
+  margin: 10px;
 }
