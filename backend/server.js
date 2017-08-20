@@ -95,6 +95,13 @@ app.get('/api/v1/folders/:id/links', (request, response) => {
   .then((links) => response.status(200).json(links))
 })
 
+app.route('/api/v1/links/:id')
+.get((request, response) => {
+  database('links').where('id', request.params.id).select()
+  .then(link => response.status(302).redirect(link[0].origURL))
+  .catch(error => response.status(404).json(error))
+})
+
 //creates a route handler to listen for GET requests from a client. The first argument in this function is the route path. Listening for get requests on localhost:3000/.
 //The request object contains information about the request that came from the client (request headers, query parameters, request body, etc.). The response object contains information that we want
 //to send as a response back to the client

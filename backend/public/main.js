@@ -46,6 +46,8 @@ const addFolder = (folderInput) => {
       'folderName': folderInput
     })
   })
+  .then((res) => res.json())
+  .then((res) => console.log(res))
   .then((res) => getFolders())
 }
 
@@ -86,9 +88,9 @@ const addLink = (urlInput, descriptionInput, folderId, parentElement) => {
   })
   .then((res) => res.json())
   .then((res) => {
-    console.log(res);
     getLinks()
-    appendInfo(res.origURL, res.description, parentElement, res.shortURL)
+    appendInfo(res.origURL, res.description, parentElement, res.shortURL, res.id)
+    // console.log('add link', res.id);
   })
   .catch(error => console.log(error))
 }
@@ -96,8 +98,8 @@ const addLink = (urlInput, descriptionInput, folderId, parentElement) => {
 const getLinks = () => {
   fetch(`/api/v1/links`)
   .then((res) => res.json())
-  .then((data) => {
-    console.log(data)
+  .then((link) => {
+    console.log(link)
   })
   .catch(error => console.log(error))
 }
@@ -110,12 +112,24 @@ const deleteFolder = (id) => {
     .catch(error => console.log(error))
 }
 
-const appendInfo = (url, description, parentElement, shortURL) => {
+const appendInfo = (url, description, parentElement, shortURL, id) => {
   // $('.new-info').html("")
+  console.log(shortURL);
+  console.log('id', id);
+  parentElement.empty()
+
+  parentElement.forEach((info) => {
+    info.append(`
+      <div class="new-info">
+        <div class="descriptionTitle">${description}</div>
+         <a class="shortTitle" href="/api/v1/links/${id}" target="_blank">jf.com/${shortURL}</a>
+      </div>
+      `)
+  })
   parentElement.append(`
     <div class="new-info">
       <div class="descriptionTitle">${description}</div>
-      <div class="shortTitle">${window.location.href}${shortURL}</div>
+       <a class="shortTitle" href="/api/v1/links/${id}" target="_blank">jf.com/${shortURL}</a>
     </div>`)
 }
 
@@ -125,7 +139,7 @@ const getFolderLinks =  (id, parentElement) => {
   .then((data) => {
     console.log(data);
     data.forEach((info) => {
-      appendInfo(info.origURL, info.description, parentElement, info.shortURL)
+      appendInfo(info.origURL, info.description, parentElement, info.shortURL, info.id)
     })
   })
   .catch(error => console.log(error))
