@@ -21,6 +21,7 @@ $('.folder-list-container').on('click', '.short-submit', (e) => {
   e.preventDefault()
   let urlInput = $(e.target).parent().find('.origURL').val()
   let descriptionInput = $(e.target).parent().find('.description').val()
+  $('.input').val('')
 
   addLink(urlInput, descriptionInput, folderId, $(e.target).parent().find('.info-wrapper'))
 })
@@ -28,8 +29,8 @@ $('.folder-list-container').on('click', '.short-submit', (e) => {
 $('.folder-list-container').on('click', '.folder', function (e) {
   $(e.target).parent().find(".drop-down").toggleClass("show")
   folderId =  e.target.value
-
-  getFolderLinks(folderId, $(this).parent().find('.info-wrapper'))
+  $('.info-wrapper').empty()
+  getFolderLinks(folderId, $(this).parent().find('.info-wrapper'), $('#sorting').val())
 })
 
 $('.folder-list-container').on('click', '.delete-folder', function (e) {
@@ -49,6 +50,7 @@ const addFolder = (folderInput) => {
   .then((res) => res.json())
   .then((res) => console.log(res))
   .then((res) => getFolders())
+  .catch((error ) => console.log(error))
 }
 
 const getFolders = () => {
@@ -88,9 +90,10 @@ const addLink = (urlInput, descriptionInput, folderId, parentElement) => {
   })
   .then((res) => res.json())
   .then((res) => {
-    getLinks()
-    appendInfo(res.origURL, res.description, parentElement, res.shortURL, res.id)
-    // console.log('add link', res.id);
+    console.log('hiii');
+    // getLinks()
+    appendInfo(res.origURL, res.description, parentElement, res.shortURL, res.id, res.created_at)
+    console.log('add link', res.created_at);
   })
   .catch(error => console.log(error))
 }
@@ -112,35 +115,36 @@ const deleteFolder = (id) => {
     .catch(error => console.log(error))
 }
 
-const appendInfo = (url, description, parentElement, shortURL, id) => {
+const appendInfo = (url, description, parentElement, shortURL, id, created) => {
   // $('.new-info').html("")
   console.log(shortURL);
   console.log('id', id);
-  parentElement.empty()
 
-  parentElement.forEach((info) => {
-    info.append(`
-      <div class="new-info">
-        <div class="descriptionTitle">${description}</div>
-         <a class="shortTitle" href="/api/v1/links/${id}" target="_blank">jf.com/${shortURL}</a>
-      </div>
-      `)
-  })
   parentElement.append(`
     <div class="new-info">
       <div class="descriptionTitle">${description}</div>
        <a class="shortTitle" href="/api/v1/links/${id}" target="_blank">jf.com/${shortURL}</a>
+       <p class="date">Added: ${moment(created).format('M/DD/YY h:mm')}</p>
     </div>`)
 }
 
-const getFolderLinks =  (id, parentElement) => {
+const getFolderLinks =  (id, parentElement, sortOrder) => {
   fetch(`/api/v1/folders/${id}/links`)
   .then((res) => res.json())
   .then((data) => {
     console.log(data);
-    data.forEach((info) => {
-      appendInfo(info.origURL, info.description, parentElement, info.shortURL, info.id)
-    })
+
+    if(sortOrder === 'asc') {
+      data.forEach((info) => {
+        appendInfo(info.origURL, info.description, parentElement, info.shortURL, info.id, info.created_at)
+      })
+    } else if (sortOrder === 'dec') {
+      data.reverse()
+      data.forEach((info) => {
+        appendInfo(info.origURL, info.description, parentElement, info.shortURL, info.id, info.created_at)
+      })
+    }
+
   })
   .catch(error => console.log(error))
 }

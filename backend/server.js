@@ -3,6 +3,7 @@ const app = express(); //sets up the Express application
 const path = require('path'); //part of letting you access the absolute path
 const bodyParser = require('body-parser');
 const shortHash = require('short-hash');
+const validUrl = require('valid-url');
 
 const environment = process.env.NODE_ENV || 'development'
 const configuration = require('../knexfile')[environment]
@@ -50,6 +51,7 @@ app.post('/api/v1/folders', (request, response) => {
       });
     };
   };
+
   database('folders').insert(newFolder, 'id')
     .then(folder => {
       response.status(201).json({ id: folder[0] })
@@ -72,6 +74,11 @@ app.post('/api/v1/links', (request, response) => {
   const newLink = request.body
   newLink.shortURL = shortHash(newLink.origURL)
 
+  console.log(validUrl.isWebUri(newLink.origURL));
+  if(!validUrl.isWebUri(newLink.origURL)) {
+    return response.status(422).json({ error: `Please enter a valid url`})
+  }
+
   for(let requiredParameter of ['origURL', 'description', 'folder_id']) {
     if(!newLink[requiredParameter]) {
       return response.status(422).json({
@@ -79,6 +86,7 @@ app.post('/api/v1/links', (request, response) => {
       })
     }
   }
+
   database('links').insert(newLink, '*')
     .then(link => {
       response.status(201).json(link[0])
