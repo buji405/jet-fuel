@@ -15,8 +15,9 @@ describe('Client Routes', () => {
     chai.request(server)
     .get('/')
     .end((err, response) => {
-      response.should.have.status(200);
-      response.should.be.html;
+      response.should.have.status(200)
+      response.should.be.html
+
       done()
     })
   })
@@ -81,8 +82,8 @@ describe('API Routes', () => {
         response.body[0].should.have.property('folder_id')
         response.body[0].folder_id.should.equal(1)
         response.body[0].should.have.property('created_at')
-
         response.body[0].should.have.property('updated_at')
+
         response.body[3].should.have.property('description')
         response.body[3].description.should.equal('Food')
         response.body[3].should.have.property('origURL')
@@ -122,13 +123,12 @@ describe('API Routes', () => {
         chai.request(server)
          .get('/api/v1/folders')
          .end((err, response) => {
-           console.log('folder response',response);
-          response.should.have.status(200);
-          response.should.be.json;
-          response.body.should.be.a('array');
-          response.body.length.should.equal(3);
-          response.body[2].should.have.property('folderName');
-          response.body[2].folderName.should.equal('Pictures');
+          response.should.have.status(200)
+          response.should.be.json
+          response.body.should.be.a('array')
+          response.body.length.should.equal(3)
+          response.body[2].should.have.property('folderName')
+          response.body[2].folderName.should.equal('Pictures')
 
           done();
          })
@@ -176,15 +176,15 @@ describe('API Routes', () => {
         chai.request(server)
         .get('/api/v1/folders/2/links')
         .end((err, response) => {
-          response.should.have.status(200);
-          response.body.length.should.equal(4);
-          response.body[3].should.have.property('description');
-          response.body[3].description.should.equal('Tacos');
-          response.body[3].should.have.property('origURL');
-          response.body[3].origURL.should.equal('http://denvertacofestival.com/');
-          response.body[3].should.have.property('shortURL');
-          response.body[3].shortURL.should.equal('6297bf86');
-          response.body[3].should.have.property('folder_id');
+          response.should.have.status(200)
+          response.body.length.should.equal(4)
+          response.body[3].should.have.property('description')
+          response.body[3].description.should.equal('Tacos')
+          response.body[3].should.have.property('origURL')
+          response.body[3].origURL.should.equal('http://denvertacofestival.com/')
+          response.body[3].should.have.property('shortURL')
+          response.body[3].shortURL.should.equal('6297bf86')
+          response.body[3].should.have.property('folder_id')
           response.body[3].folder_id.should.equal(2);
 
           done()
@@ -215,89 +215,9 @@ describe('API Routes', () => {
       .end((err, response) => {
         response.should.have.status(200)
         response.redirects[0].should.equal('http://www.google.com/')
+
         done()
       })
     })
   })
 })
-
-
-
-
-
-
-
-
-
-// describe('POST /api/v1/students', () => {
-//     it('should create a new student', (done) => {
-//       chai.request(server)
-//       .post('/api/v1/students')
-//       .send({
-//         lastname: 'Knuth',
-//         program: 'FE',
-//         enrolled: true
-//       })
-//       .end((err, response) => {
-//          response.should.have.status(201); // Different status here
-//          response.body.should.be.a('object');
-//          response.body.should.have.property('lastname');
-//          response.body.lastname.should.equal('Knuth');
-//          response.body.should.have.property('program');
-//          response.body.program.should.equal('FE');
-//          response.body.should.have.property('enrolled');
-//          response.body.enrolled.should.equal(true);
-//          chai.request(server)
-//          .get('/api/v1/students')
-//          .end((err, response) => {
-//           response.should.have.status(200);
-//           response.should.be.json;
-//           response.body.should.be.a('array');
-//           response.body.length.should.equal(4);
-//           response.body[3].should.have.property('lastname');
-//           response.body[3].lastname.should.equal('Knuth');
-//           response.body[3].should.have.property('program');
-//           response.body[3].program.should.equal('FE');
-//           response.body[3].should.have.property('enrolled');
-//           response.body[3].enrolled.should.equal(true);
-//           done();
-//          })
-//       })
-//     })
-//     it('should not create student if missing required field', (done) => {
-//       chai.request(server)
-//       .post('/api/v1/students')
-//       .send({
-//         lastname: 'Knuth',
-//         program: 'FE'
-//       })
-//       .end((err, response) => {
-//         response.should.have.status(422);
-//         response.body.error.should.equal('You are missing data!');
-//         done();
-//       })
-//     })
-//   })
-//
-//   describe('GET /api/v1/students/knuth', () => {
-//     it('should show student info', (done) => {
-//       chai.request(server)
-//       .get('/api/v1/students/knuth')
-//       .end((err, response) => {
-//         response.should.have.status(200);
-//         response.body[3].lastname.should.equal('Knuth')
-//         done()
-//       })
-//     })
-//     it('should return an error if student name does not exist', (done) => {
-//       chai.request(server)
-//       .get('/api/v1/students/bobbertson')
-//       .end((error, response) => {
-//         response.body[4].lastname.should.equal('bobbertson')
-//         response.should.have.status(404)
-//         response.body.error.should.equal('That name does not exist')
-//         done()
-//       })
-//     })
-//   })
-// });
