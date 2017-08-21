@@ -1,17 +1,17 @@
 const express = require('express');  //requires the Express module that was installed via NPM
 const app = express(); //sets up the Express application
 const path = require('path'); //part of letting you access the absolute path
-const bodyParser = require('body-parser');
-const shortHash = require('short-hash');
-const validUrl = require('valid-url');
+const bodyParser = require('body-parser'); //need for parsing the body of posts
+const shortHash = require('short-hash'); //npm package for url shortener
+const validUrl = require('valid-url'); //npm package for validating urls
 
-const environment = process.env.NODE_ENV || 'development'
-const configuration = require('../knexfile')[environment]
-const database = require('knex')(configuration)
+const environment = process.env.NODE_ENV || 'development' //sets the environment to dev or product etc..
+const configuration = require('../knexfile')[environment] //for the test environment
+const database = require('knex')(configuration) //runs knex function and passes it the test environment
 
-app.set('port', process.env.PORT || 3000);
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }))
+app.set('port', process.env.PORT || 3000); //dynamic port, either localhost or for your heroku address
+app.use(bodyParser.json()); //for every request run body parser so it can read the body on posts
+app.use(bodyParser.urlencoded({ extended: true })) //parses full objects
 app.use(express.static(path.join(__dirname, 'public')));
 //app.use() says for every request to the server, always run the function passed into app.use()
 //In this case we’re saying, for every request to the server, make sure to use the specified path as a starting point for all static asset files.
@@ -20,6 +20,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (request, response) => {
 
 });
+//the home endpoint where everything is rendered
 
 app.get('/api/v1/folders', (request, response) => {
   database('folders').select()
@@ -30,6 +31,7 @@ app.get('/api/v1/folders', (request, response) => {
       response.status(500).json({ error })
     });
 });
+//get request routing to folders endpoint, pass folders table to database, give it response status 200 if success or 500 if error
 
 app.get('/api/v1/links', (request, response) => {
   database('links').select()
@@ -40,6 +42,8 @@ app.get('/api/v1/links', (request, response) => {
       response.status(500).json({ error })
     });
 });
+
+//get request routing to links endpoint, pass links table to database, give it response status 200 if success or 500 if error
 
 app.post('/api/v1/folders', (request, response) => {
   const newFolder = request.body;
@@ -52,6 +56,8 @@ app.post('/api/v1/folders', (request, response) => {
     };
   };
 
+  //post request routing to folders endpoint, enter in required properties, return error if anything required is missing.
+
   database('folders').insert(newFolder, 'id')
     .then(folder => {
       response.status(201).json({ id: folder[0] })
@@ -60,6 +66,8 @@ app.post('/api/v1/folders', (request, response) => {
       response.status(500).json({ error })
     });
 });
+
+//pass folders table to database, pass in the new folder and id. give it response status 201 and id if success, or 500 if error
 
 app.delete('/api/v1/folders/:id', (request, response) => {
   const id = request.params.id
@@ -70,14 +78,16 @@ app.delete('/api/v1/folders/:id', (request, response) => {
   })
 })
 
+//delete request to folders endpoint, pass db the folders table and id, run delete method. if success give status of 200, or 501 if error
+
 app.post('/api/v1/links', (request, response) => {
   const newLink = request.body
   newLink.shortURL = shortHash(newLink.origURL)
 
-  console.log(validUrl.isWebUri(newLink.origURL));
   if(!validUrl.isWebUri(newLink.origURL)) {
     return response.status(422).json({ error: `Please enter a valid url`})
   }
+  //post request routing to links endpoint, enter in required properties, return error if anything required is missing.
 
   for(let requiredParameter of ['origURL', 'description', 'folder_id']) {
     if(!newLink[requiredParameter]) {
@@ -86,6 +96,8 @@ app.post('/api/v1/links', (request, response) => {
       })
     }
   }
+
+  //setting more required parameters of description, url and folderid
 
   database('links').insert(newLink, '*')
     .then(link => {
@@ -96,12 +108,16 @@ app.post('/api/v1/links', (request, response) => {
     })
 })
 
+//pass links table to db and insert new link, if success 201 status, 500 status if error
+
 app.get('/api/v1/folders/:id/links', (request, response) => {
   const id = request.params.id
-  console.log(id);
   database('links').where('folder_id', id).select()
   .then((links) => response.status(200).json(links))
+  .catch(error => response.status(404).json(error))
 })
+
+//get request to links in a certain folder endpoint, pass links table to db and connect with the foreign key. return appropriate status depending on success or error.
 
 app.route('/api/v1/links/:id')
 .get((request, response) => {
@@ -110,14 +126,11 @@ app.route('/api/v1/links/:id')
   .catch(error => response.status(404).json(error))
 })
 
-//creates a route handler to listen for GET requests from a client. The first argument in this function is the route path. Listening for get requests on localhost:3000/.
-//The request object contains information about the request that came from the client (request headers, query parameters, request body, etc.). The response object contains information that we want
-//to send as a response back to the client
-
+//routes to link endpoint, passes links table to db, returns 302 if success then redirects to link at index 0 with original url tacked on
 
 app.listen(app.get('port'), () => {
   console.log('Express running');
 });
-//tells the server to start listening for connections on port localhost 3000, see to log express running in terminal
+//tells the server to start listening for connections on port localhost 3000
 
 module.exports = app

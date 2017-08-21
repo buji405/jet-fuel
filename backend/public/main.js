@@ -4,7 +4,7 @@ $(function() {
   getLinks()
 })
 
-let folderId;
+let folderId
 
 $('.submit').on('click', (e) => {
   let folderInput = $('.folder-input').val()
@@ -48,7 +48,6 @@ const addFolder = (folderInput) => {
     })
   })
   .then((res) => res.json())
-  .then((res) => console.log(res))
   .then((res) => getFolders())
   .catch((error ) => console.log(error))
 }
@@ -69,7 +68,7 @@ const getFolders = () => {
                 <div class="info-wrapper"></div>
                 <button class="delete-folder" value="${folderName.id}">Delete Folder</button>
               </div>
-            </div>
+          </div>
         `)
     })
   })
@@ -84,16 +83,13 @@ const addLink = (urlInput, descriptionInput, folderId, parentElement) => {
     method: 'POST',
     body: JSON.stringify({
       'origURL': urlInput,
-       'description': descriptionInput,
-       'folder_id': folderId
+      'description': descriptionInput,
+      'folder_id': folderId
     })
   })
   .then((res) => res.json())
   .then((res) => {
-    console.log('hiii');
-    // getLinks()
     appendInfo(res.origURL, res.description, parentElement, res.shortURL, res.id, res.created_at)
-    console.log('add link', res.created_at);
   })
   .catch(error => console.log(error))
 }
@@ -101,9 +97,6 @@ const addLink = (urlInput, descriptionInput, folderId, parentElement) => {
 const getLinks = () => {
   fetch(`/api/v1/links`)
   .then((res) => res.json())
-  .then((link) => {
-    console.log(link)
-  })
   .catch(error => console.log(error))
 }
 
@@ -111,20 +104,16 @@ const deleteFolder = (id) => {
   fetch(`/api/v1/folders/${id}`, {
     method: 'DELETE'
   })
-    .then(() => getFolders())
-    .catch(error => console.log(error))
+  .then(() => getFolders())
+  .catch(error => console.log(error))
 }
 
 const appendInfo = (url, description, parentElement, shortURL, id, created) => {
-  // $('.new-info').html("")
-  console.log(shortURL);
-  console.log('id', id);
-
   parentElement.append(`
     <div class="new-info">
       <div class="descriptionTitle">${description}</div>
-       <a class="shortTitle" href="/api/v1/links/${id}" target="_blank">jf.com/${shortURL}</a>
-       <p class="date">Added: ${moment(created).format('M/DD/YY h:mm')}</p>
+      <a class="shortTitle" href="/api/v1/links/${id}" target="_blank">jf.com/${shortURL}</a>
+      <p class="date">Added: ${moment(created).format('M/DD/YY h:mm')}</p>
     </div>`)
 }
 
@@ -132,8 +121,6 @@ const getFolderLinks =  (id, parentElement, sortOrder) => {
   fetch(`/api/v1/folders/${id}/links`)
   .then((res) => res.json())
   .then((data) => {
-    console.log(data);
-
     if(sortOrder === 'asc') {
       data.forEach((info) => {
         appendInfo(info.origURL, info.description, parentElement, info.shortURL, info.id, info.created_at)
@@ -144,7 +131,6 @@ const getFolderLinks =  (id, parentElement, sortOrder) => {
         appendInfo(info.origURL, info.description, parentElement, info.shortURL, info.id, info.created_at)
       })
     }
-
   })
   .catch(error => console.log(error))
 }

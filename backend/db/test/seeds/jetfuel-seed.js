@@ -4,7 +4,6 @@ exports.seed = function(knex, Promise) {
   .then(() => knex('folders').del())
 
     .then(() => {
-      // Inserts seed entries
       return Promise.all([
         knex('folders').insert({
           folderName: 'Concerts'
@@ -20,7 +19,6 @@ exports.seed = function(knex, Promise) {
       ])
     })
     .then(() => {
-      // Inserts seed entries
       return Promise.all([
         knex('folders').insert({
           folderName: 'Dogs'
