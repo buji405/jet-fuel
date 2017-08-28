@@ -60,8 +60,8 @@ app.post('/api/v1/folders', (request, response) => {
 
 app.delete('/api/v1/folders/:id', (request, response) => {
   const id = request.params.id
-  database('folders').where('id', id).del()
-  .then((res) => response.status(200).json(res))
+  database('folders').where('id', id).del('*')
+  .then((res) => response.status(200).json(res[0]))
   .catch(error => {
     response.status(501).json({ error })
   })
